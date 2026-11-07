@@ -1,0 +1,62 @@
+# InfoForge v2 — configuración
+# Edita según tu entorno. NUNCA pongas claves aquí si vas a subir el repo a git.
+# Usa variables de entorno para claves: INFOFORGE_SHODAN_KEY
+general:
+  timeout_segundos: 8
+  user_agent: "InfoForge/2.1"
+  idioma: es-ES
+  version: "2.1.0"
+
+# Modo sigiloso por defecto (la CLI --stealth lo activa por comando)
+stealth:
+  enabled: false
+  delay_min_segundos: 1.5
+  delay_max_segundos: 4.5
+  hilos: 5
+  timeout_puerto_segundos: 5.0
+  usar_tor: false          # Tor SOCKS5 en 127.0.0.1:9050 — en Kali: sudo systemctl start tor
+  mezclar_puertos: true
+  banner_grabbing: false
+
+scanner:
+  puertos_por_defecto: common   # common | top100 | none
+  timeout_puerto_segundos: 1.0
+  hilos_normales: 50
+  usar_nmap_si_disponible: false
+
+# Claves de APIs externas (opcionales). Mejor por entorno que aquí.
+# shodan_key: ""   # o export INFOFORGE_SHODAN_KEY="..."
+
+reportes:
+  carpeta: reports
+  formatos: [json, md, html]
+
+red:
+  dns_publico_para_ping: "8.8.8.8"
+  api_ip_publica: "https://api.ipify.org?format=json"
+  api_geolocalizacion: "http://ip-api.com/json/{ip}"
+
+kali:
+  # Herramientas que install.sh intenta instalar en Kali/Debian
+  paquetes_apt:
+    - nmap
+    - masscan
+    - whois
+    - dnsutils
+    - curl
+    - jq
+    - git
+    - traceroute
+    - iproute2
+    - iputils-ping
+    - whatweb
+    - nikto
+    - gobuster
+    - ffuf
+    - theharvester
+    - amass
+    - sublist3r
+    - dnsenum
+    - arp-scan
+    - tor
+    - proxychains4

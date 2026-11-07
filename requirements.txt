@@ -1,0 +1,14 @@
+# InfoForge v2 — dependencias Python
+# El núcleo funciona solo con la biblioteca estándar.
+# Estas son recomendadas en Kali para sacarle todo el partido.
+#
+# Instalación en Kali:
+#   python3 -m pip install -r requirements.txt --break-system-packages
+#   # o mejor, en venv: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+#
+dnspython>=2.7        # Consultas DNS avanzadas (opcional, hay fallback stdlib)
+requests>=2.32        # Cliente HTTP robusto (opcional)
+PyYAML>=6.0           # Leer config.yaml (opcional)
+python-nmap>=0.7.1    # API de nmap (opcional, el wrapper usa el binario nmap)
+shodan>=1.28          # Cliente Shodan (opcional, solo si usas Shodan)
+beautifulsoup4>=4.12  # Parseo HTML para webtech avanzado (opcional)

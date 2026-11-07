@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InfoForge v2.1.0 — Panel</title>
+<style>
+:root{--bg:#0b1220;--card:#111c33;--card2:#0f172a;--text:#e2e8f0;--muted:#94a3b8;--accent:#38bdf8;--green:#22c55e;--yellow:#eab308;--red:#ef4444;--border:#1e293b}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+header{padding:24px 20px 12px;max-width:1100px;margin:auto}
+h1{margin:0;font-size:28px}h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:6px 0 0}
+.badge{display:inline-block;background:#052e16;color:#86efac;border:1px solid #166534;padding:3px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+.badge.warn{background:#422006;color:#fde68a;border-color:#854d0e}
+main{max-width:1100px;margin:auto;padding:12px 20px 40px;display:grid;gap:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
+.card h2{margin:0 0 10px;font-size:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.mod{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px}
+.mod b{color:var(--accent)} .mod p{color:var(--muted);font-size:13px;margin:6px 0 0}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input,select,textarea{width:100%;background:#020617;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px;font-size:14px}
+textarea{min-height:120px;font-family:ui-monospace,monospace}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{background:var(--accent);color:#082f49;border:0;border-radius:8px;padding:10px 14px;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+code.cmd{display:block;background:#020617;border:1px solid var(--border);border-radius:8px;padding:12px;overflow:auto;white-space:pre-wrap;font-size:13px;margin-top:12px}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{border-bottom:1px solid var(--border);padding:8px 6px;text-align:left;vertical-align:top}th{color:var(--muted)}
+.kpi{font-size:26px;font-weight:800}.ok{color:var(--green)}.warn{color:var(--yellow)}.bad{color:var(--red)}
+pre{white-space:pre-wrap;word-break:break-word;background:#020617;padding:12px;border-radius:8px;max-height:420px;overflow:auto;font-size:12px}
+footer{color:var(--muted);font-size:12px;text-align:center;padding:20px}
+.check{accent-color:var(--accent);width:auto}
+</style>
+</head>
+<body>
+<header>
+<h1>InfoForge <span>v2.1.0</span></h1>
+<p class="sub">Panel para Linux / Kali — obtención de información · Solo objetivos propios o con autorización</p>
+<p><span class="badge">✓ 10/10 pruebas</span><span class="badge">Kali Linux</span><span class="badge warn">Modo sigiloso disponible</span></p>
+</header>
+<main>
+<section class="card">
+<h2>1 · Generador de comandos</h2>
+<p style="color:var(--muted);font-size:14px">Escribe el objetivo, marca las opciones y copia el comando. La UI no ejecuta nada por sí sola: el framework se ejecuta en tu terminal de Kali.</p>
+<label>Objetivo (dominio o IP)</label>
+<input id="target" value="www.intercambiosvirtuales.org" placeholder="ejemplo.com">
+<div class="grid" style="margin-top:8px">
+<div><label>Comando</label><select id="cmd"><option value="target">target — recolección completa</option><option value="full">full — local + objetivo</option><option value="subdomains">subdomains</option><option value="username">username</option><option value="system">system</option><option value="network">network</option></select></div>
+<div><label>Puertos</label><select id="ports"><option value="common">common (15)</option><option value="top100">top100</option><option value="none">none</option></select></div>
+<div><label>Salida</label><select id="output"><option value="json">json</option><option value="html">html</option><option value="md">md</option><option value="stdout">stdout</option></select></div>
+</div>
+<div class="row" style="margin-top:12px">
+<label><input class="check" type="checkbox" id="stealth" checked> --stealth</label>
+<label><input class="check" type="checkbox" id="tor"> --tor</label>
+<label><input class="check" type="checkbox" id="nmap"> --nmap</label>
+<label><input class="check" type="checkbox" id="brute"> --brute-subdomains</label>
+<label><input class="check" type="checkbox" id="harvester"> --harvester</label>
+<label><input class="check" type="checkbox" id="traceroute"> --traceroute</label>
+</div>
+<code class="cmd" id="out">python3 infoforge.py target www.intercambiosvirtuales.org --stealth --ports common --output json</code>
+<div class="row" style="margin-top:10px"><button onclick="copyCmd()">Copiar comando</button><button class="ghost" onclick="document.getElementById('target').value='example.com';update()">Usar example.com</button><span id="copied" style="color:var(--green)"></span></div>
+<p style="color:var(--muted);font-size:13px">Modo sigiloso: delays 1.5–4.5 s, 5 hilos, UA rotativo, puertos aleatorios, sin banner grabbing. No te hace invisible.</p>
+</section>
+
+<section class="card">
+<h2>2 · Prueba real — www.intercambiosvirtuales.org (autorizada, sigilosa)</h2>
+<p style="color:var(--muted);font-size:14px">Informe generado con v2.1.0: <code>reports/infoforge-www.intercambiosvirtuales.json</code></p>
+<div class="grid">
+<div class="mod"><div class="kpi ok">200</div><p>HTTP / HTTPS — Cloudflare</p></div>
+<div class="mod"><div class="kpi">WordPress · PHP</div><p>Tecnologías detectadas</p></div>
+<div class="mod"><div class="kpi warn">1/6</div><p>Cabeceras de seguridad — solo HSTS presente</p></div>
+<div class="mod"><div class="kpi">2</div><p>Subdominios crt.sh — intercambiosvirtuales.org + www</p></div>
+<div class="mod"><div class="kpi">20</div><p>Snapshots Wayback (primera prueba; segunda dio timeout y se gestionó sin romper el informe)</p></div>
+<div class="mod"><div class="kpi">404</div><p>sitemap.xml no existe (antes salía <i>codigo: null</i>, corregido)</p></div>
+</div>
+<table style="margin-top:12px">
+<tr><th>Hallazgo</th><th>Detalle</th></tr>
+<tr><td>DNS</td><td>Solo registro A en este entorno sandbox; en Kali, dig devuelve MX/NS/TXT/SOA</td></tr>
+<tr><td>TLS</td><td>Error explicado: WRONG_VERSION_NUMBER por proxy del sandbox; en Kali usa openssl como fallback</td></tr>
+<tr><td>robots.txt</td><td>200 — incluye señales de contenido (search / ai-input / ai-train)</td></tr>
+<tr><td>WHOIS</td><td>Ahora sobre dominio base <code>intercambiosvirtuales.org</code>, no sobre www.</td></tr>
+<tr><td>ASN / geo-IP</td><td>ip-api falla para la IP sandbox 198.18.153.207 (rango reservado); nota explicativa añadida</td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2>3 · Módulos v2.1.0</h2>
+<div class="grid">
+<div class="mod"><b>system_info</b><p>SO, kernel, CPU, RAM, disco, usuarios, procesos</p></div>
+<div class="mod"><b>network</b><p>Interfaces, rutas, IP pública, geo-IP</p></div>
+<div class="mod"><b>dns_whois</b><p>DNS, WHOIS sobre dominio base, DNS inverso</p></div>
+<div class="mod"><b>scanner / nmap_scan</b><p>TCP concurrente + wrapper nmap -sV/-sC</p></div>
+<div class="mod"><b>subdomains</b><p>crt.sh + fuerza bruta DNS ligera</p></div>
+<div class="mod"><b>web_osint / webtech</b><p>HTTP/TLS, fingerprint, robots, sitemap</p></div>
+<div class="mod"><b>wayback_asn</b><p>Wayback Machine + ASN (con reintento)</p></div>
+<div class="mod"><b>username_osint</b><p>15 plataformas públicas</p></div>
+<div class="mod"><b>shodan_api</b><p>Opcional, con INFOFORGE_SHODAN_KEY</p></div>
+<div class="mod"><b>external_tools</b><p>theHarvester, whatweb, dnsenum, traceroute</p></div>
+<div class="mod"><b>stealth</b><p>Delays, UA rotativo, Tor opcional</p></div>
+<div class="mod"><b>reporter</b><p>JSON / Markdown / HTML / TXT</p></div>
+</div>
+</section>
+
+<section class="card">
+<h2>4 · Visor de informes</h2>
+<p style="color:var(--muted);font-size:14px">Pega un informe JSON de <code>reports/</code> o arrastra el archivo, y se resume aquí.</p>
+<textarea id="json" placeholder='Pega aquí el JSON de InfoForge…'></textarea>
+<div class="row" style="margin-top:10px"><button onclick="renderReport()">Ver informe</button><input type="file" id="file" accept=".json" style="width:auto"></div>
+<pre id="report">Sin informe cargado todavía.</pre>
+</section>
+
+<section class="card">
+<h2>5 · Instalación en Kali</h2>
+<code class="cmd">cd infoforge-linux
+bash install.sh
+python3 infoforge.py kali-check
+python3 infoforge.py target TU-OBJETIVO --stealth --output html</code>
+<p style="color:var(--muted);font-size:13px">Abre esta UI en Kali con: <code>python3 -m http.server 8000 --directory ui</code> y luego <code>http://localhost:8000</code></p>
+</section>
+</main>
+<footer>InfoForge v2.1.0 · MIT · Creado por Tweeky para Luis · Solo uso autorizado</footer>
+<script>
+function update(){
+ const t=document.getElementById('target').value.trim()||'example.com';
+ const c=document.getElementById('cmd').value;
+ const p=document.getElementById('ports').value;
+ const o=document.getElementById('output').value;
+ let s=`python3 infoforge.py ${c} ${t}`;
+ if(c==='target'||c==='full'){
+   if(document.getElementById('stealth').checked) s+=' --stealth';
+   if(document.getElementById('tor').checked) s+=' --tor';
+   if(document.getElementById('nmap').checked) s+=' --nmap';
+   if(document.getElementById('brute').checked) s+=' --brute-subdomains';
+   if(document.getElementById('harvester').checked) s+=' --harvester';
+   if(document.getElementById('traceroute').checked) s+=' --traceroute';
+   s+=` --ports ${p} --output ${o}`;
+ } else if(c==='subdomains'){ s+= document.getElementById('brute').checked?' --brute':''; s+=` --output ${o}`; }
+ else { s+=` --output ${o}`; }
+ document.getElementById('out').textContent=s;
+}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',update));
+function copyCmd(){navigator.clipboard.writeText(document.getElementById('out').textContent).then(()=>{document.getElementById('copied').textContent='Copiado ✓';setTimeout(()=>document.getElementById('copied').textContent='',2000);});}
+function renderReport(){
+ try{const d=JSON.parse(document.getElementById('json').value);
+  const r=d.resultados||{};
+  let lines=[`Herramienta: ${d.herramienta} ${d.version} · Objetivo: ${d.objetivo} · Sigiloso: ${d.sigiloso} · ${d.generado_en}`,``];
+  for(const [k,v] of Object.entries(r)){lines.push(`## ${k}`); lines.push(JSON.stringify(v).slice(0,1200)); lines.push('');}
+  document.getElementById('report').textContent=lines.join('\n');
+ }catch(e){document.getElementById('report').textContent='JSON no válido: '+e.message;}
+}
+document.getElementById('file').addEventListener('change',e=>{const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{document.getElementById('json').value=rd.result; renderReport();}; rd.readAsText(f);});
+update();
+</script>
+</body>
+</html>
