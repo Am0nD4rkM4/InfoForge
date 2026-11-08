@@ -39,10 +39,24 @@ def _detect(body: str, headers: dict) -> list[str]:
     return found
 
 
-def collect(target: str, stealth: StealthProfile | None = None) -> dict:
+def collect(target: str, stealth: StealthProfile | None = None,
+            fallback: dict | None = None) -> dict:
+    """fallback: {"codigo": int, "cabeceras": dict, "muestra_cuerpo": str}
+    (lo que web_osint ya obtuvo de la misma pagina). Si la peticion propia
+    falla (codigo None), se reutiliza el respaldo en vez de puntuar 0/6
+    en silencio; si tampoco hay respaldo, la puntuacion queda "sin datos"."""
     stealth = stealth or StealthProfile.normal()
     base = target if target.startswith(("http://", "https://")) else f"https://{target}"
     code, headers, body = http_get_text(base, timeout=12, user_agent=stealth.random_ua())
+    error_carga = None
+    fuente_cabeceras = "webtech"
+    if code is None:
+        error_carga = body[:500] if body else "La peticion a la pagina principal fallo sin codigo HTTP."
+        fb = fallback or {}
+        if fb.get("codigo") and fb.get("cabeceras"):
+            headers = dict(fb["cabeceras"])
+            body = fb.get("muestra_cuerpo") or ""
+            fuente_cabeceras = "web_osint (respaldo)"
     stealth.sleep()
     robots_code, _, robots = http_get_text(base.rstrip("/") + "/robots.txt",
                                            timeout=10, user_agent=stealth.random_ua())
@@ -60,6 +74,7 @@ def collect(target: str, stealth: StealthProfile | None = None) -> dict:
     low = {k.lower(): v for k, v in headers.items()}
     sec = {h: low.get(h, "AUSENTE") for h in SECURITY_HEADERS}
     score = sum(1 for v in sec.values() if v != "AUSENTE")
+    puntuacion = f"{score}/{len(SECURITY_HEADERS)}" if code is not None or fuente_cabeceras != "webtech" else "sin datos"
     return {
         "objetivo": target,
         "url": base,
@@ -68,7 +83,9 @@ def collect(target: str, stealth: StealthProfile | None = None) -> dict:
         "powered_by": low.get("x-powered-by", ""),
         "tecnologias_detectadas": _detect(body, headers),
         "cabeceras_seguridad": sec,
-        "puntuacion_seguridad": f"{score}/{len(SECURITY_HEADERS)}",
+        "puntuacion_seguridad": puntuacion,
+        "error_carga": error_carga,
+        "fuente_cabeceras": fuente_cabeceras,
         "cookies": low.get("set-cookie", "")[:500],
         "robots_txt": {"codigo": robots_code, "contenido": robots[:2000] if robots_code == 200 else ""},
         "sitemap_xml": {"codigo": sm_code, "existe": sm_code == 200,

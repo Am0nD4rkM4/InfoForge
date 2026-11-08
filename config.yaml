@@ -5,7 +5,7 @@ general:
   timeout_segundos: 8
   user_agent: "InfoForge/2.1"
   idioma: es-ES
-  version: "2.1.0"
+  version: "2.1.1"
 
 # Modo sigiloso por defecto (la CLI --stealth lo activa por comando)
 stealth:

@@ -28,7 +28,7 @@ BANNER = r"""
  ██║██║╚██╗██║██╔══╝  ██║   ██║██╔══╝  ██║   ██║██╔══██╗██║   ██║██╔══╝  
  ██║██║ ╚████║██║     ╚██████╔╝██║     ╚██████╔╝██║  ██║╚██████╔╝███████╗
  ╚═╝╚═╝  ╚═══╝╚═╝      ╚═════╝ ╚═╝      ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
-        Framework de obtención de información para Linux  v2.1.0
+        Framework de obtención de información para Linux  v2.1.1
         Kali Linux · Modo sigiloso · Uso autorizado únicamente. Solo objetivos propios o con permiso.
 """
 

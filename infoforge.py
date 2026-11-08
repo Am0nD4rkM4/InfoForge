@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-InfoForge v2.1.0 — Framework profesional de obtención de información para Linux / Kali.
+InfoForge v2.1.1 — Framework profesional de obtención de información para Linux / Kali.
 
 Uso:
     python3 infoforge.py system
@@ -36,7 +36,7 @@ from infoforge.modules import (dns_whois, external_tools, network, nmap_scan,
 from infoforge.reporter import save_report
 from infoforge.stealth import StealthProfile, kali_check
 
-VERSION = "2.1.0"
+VERSION = "2.1.1"
 
 
 def stealth_from(args) -> StealthProfile:
@@ -84,7 +84,11 @@ def _target_all(target: str, args, stealth: StealthProfile) -> dict:
     log("Web / TLS / OSINT…")
     resultados["web_osint"] = web_osint.collect(target)
     log("Tecnologías web / robots / sitemap…")
-    resultados["webtech"] = webtech.collect(target, stealth)
+    https = resultados["web_osint"].get("https") or {}
+    respaldo = {"codigo": https.get("codigo"),
+                "cabeceras": https.get("cabeceras") or {},
+                "muestra_cuerpo": https.get("muestra_cuerpo") or ""}
+    resultados["webtech"] = webtech.collect(target, stealth, fallback=respaldo)
     log("Subdominios (crt.sh)…")
     resultados["subdominios"] = subdomains.collect(
         target, brute=getattr(args, "brute_subdomains", False), stealth=stealth)

@@ -1,6 +1,16 @@
-# InfoForge v2.1.0 — Framework de obtención de información para Linux / Kali
+# InfoForge v2.1.1 — Framework de obtención de información para Linux / Kali
 
-**Versión 2.1.0 · Python 3.10+ · Núcleo solo con biblioteca estándar · Optimizado para Kali Linux**
+**Versión 2.1.1 · Python 3.10+ · Núcleo solo con biblioteca estándar · Optimizado para Kali Linux**
+
+## Novedades v2.1.1 — falso negativo de webtech en cymatics.fm
+
+La prueba sigilosa a cymatics.fm puntuó la seguridad web como **0/6**, pero era falso: webtech falló su propia petición (`codigo_http: null`) mientras web_osint sí cargó la página con HTTP 200. La puntuación real, verificada en el informe guardado, es **4/6** (HSTS, CSP, X-Frame-Options, X-Content-Type-Options).
+
+- `webtech.collect()` ahora acepta como respaldo las cabeceras y el cuerpo que web_osint ya obtuvo; si su petición falla, puntúa con ese respaldo y marca `fuente_cabeceras: "web_osint (respaldo)"` y `error_carga` con el motivo.
+- Sin respaldo y sin carga, la puntuación es `"sin datos"`, nunca un 0/6 silencioso.
+- El ejecutor de pruebas ahora descubre todas las `test_*` (antes solo corría las 10 listadas a mano).
+
+Pruebas: **13/13** (`tests/test_basic.py`), incluyendo 3 nuevas para el respaldo de webtech.
 
 ## Novedades v2.1.0 — correcciones tras probar www.intercambiosvirtuales.org
 
